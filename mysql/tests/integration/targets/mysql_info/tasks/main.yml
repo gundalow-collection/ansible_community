@@ -1,0 +1,87 @@
+- name: mysql_info -  create mysql user {{ user_name }}
+  ansible_community.mysql.mysql_user:
+    name: '{{ user_name }}'
+    password: '{{ user_pass }}'
+    state: present
+    priv: '*.*:ALL'
+    login_unix_socket: '{{ mysql_socket }}'
+- name: mysql_info - create default config file
+  template:
+    src: my.cnf.j2
+    dest: /root/.my.cnf
+    mode: 256
+- name: mysql_info - create non-default config file
+  template:
+    src: my.cnf.j2
+    dest: /root/non-default_my.cnf
+    mode: 256
+- name: mysql_info - collect default cred file
+  register: result
+  ansible_community.mysql.mysql_info:
+    login_user: '{{ user_name }}'
+- assert:
+    that:
+    - result.changed == false
+    - result.version != {}
+    - result.settings != {}
+    - result.global_status != {}
+    - result.databases != {}
+    - result.engines != {}
+    - result.users != {}
+- name: mysql_info - check non-default cred file
+  register: result
+  ansible_community.mysql.mysql_info:
+    login_user: '{{ user_name }}'
+    config_file: /root/non-default_my.cnf
+- assert:
+    that:
+    - result.changed == false
+    - result.version != {}
+- name: mysql_info - remove cred files
+  file:
+    path: '{{ item }}'
+    state: absent
+  with_items:
+  - /root/.my.cnf
+  - /root/non-default_my.cnf
+- name: mysql_info - check access with password
+  register: result
+  ansible_community.mysql.mysql_info:
+    login_user: '{{ user_name }}'
+    login_password: '{{ user_pass }}'
+- assert:
+    that:
+    - result.changed == false
+    - result.version != {}
+- name: Collect all info except settings and users
+  register: result
+  ansible_community.mysql.mysql_info:
+    login_user: '{{ user_name }}'
+    login_password: '{{ user_pass }}'
+    filter: '!settings,!users'
+- assert:
+    that:
+    - result.changed == false
+    - result.version != {}
+    - result.global_status != {}
+    - result.databases != {}
+    - result.engines != {}
+    - result.settings is not defined
+    - result.users is not defined
+- name: Collect info only about version and databases
+  register: result
+  ansible_community.mysql.mysql_info:
+    login_user: '{{ user_name }}'
+    login_password: '{{ user_pass }}'
+    filter:
+    - version
+    - databases
+- assert:
+    that:
+    - result.changed == false
+    - result.version != {}
+    - result.databases != {}
+    - result.engines is not defined
+    - result.settings is not defined
+    - result.global_status is not defined
+    - result.users is not defined

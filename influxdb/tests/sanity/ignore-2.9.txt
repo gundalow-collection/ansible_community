@@ -1,0 +1,12 @@
+plugins/modules/influxdb_database.py validate-modules:doc-default-does-not-match-spec
+plugins/modules/influxdb_database.py validate-modules:parameter-type-not-in-doc
+plugins/modules/influxdb_query.py validate-modules:doc-default-does-not-match-spec
+plugins/modules/influxdb_query.py validate-modules:parameter-type-not-in-doc
+plugins/modules/influxdb_retention_policy.py validate-modules:doc-default-does-not-match-spec
+plugins/modules/influxdb_retention_policy.py validate-modules:parameter-type-not-in-doc
+plugins/modules/influxdb_user.py validate-modules:doc-default-does-not-match-spec
+plugins/modules/influxdb_user.py validate-modules:parameter-type-not-in-doc
+plugins/modules/influxdb_write.py validate-modules:doc-default-does-not-match-spec
+plugins/modules/influxdb_write.py validate-modules:parameter-type-not-in-doc
+plugins/doc_fragments/influxdb.py future-import-boilerplate
+plugins/doc_fragments/influxdb.py metaclass-boilerplate

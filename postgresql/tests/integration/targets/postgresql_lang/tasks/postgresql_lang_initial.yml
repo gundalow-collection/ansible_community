@@ -1,0 +1,195 @@
+- name: postgresql_lang - install lang plperl
+  become: true
+  package:
+    name: '{{ item }}'
+    state: present
+  with_items:
+  - postgresql-plperl
+  - postgresql-plpython
+- name: postgresql_lang - create plperl in check_mode
+  become_user: '{{ pg_user }}'
+  become: true
+  register: result
+  ignore_errors: true
+  check_mode: true
+  ansible_community.postgresql.postgresql_lang:
+    db: postgres
+    login_user: '{{ pg_user }}'
+    name: plperl
+- assert:
+    that:
+    - result is changed
+    - result.queries == []
+- name: postgresql_lang - check that lang doesn't exist after previous step, rowcount
+    must be 0
+  become_user: '{{ pg_user }}'
+  become: true
+  register: result
+  ansible_community.postgresql.postgresql_query:
+    db: postgres
+    login_user: '{{ pg_user }}'
+    query: SELECT 1 FROM pg_language WHERE lanname = 'plperl'
+- assert:
+    that:
+    - result.rowcount == 0
+- name: postgresql_lang - create plperl
+  become_user: '{{ pg_user }}'
+  become: true
+  register: result
+  ignore_errors: true
+  ansible_community.postgresql.postgresql_lang:
+    db: postgres
+    login_user: '{{ pg_user }}'
+    name: plperl
+- assert:
+    that:
+    - result is changed
+    - result.queries == ['CREATE LANGUAGE "plperl"']
+- name: postgresql_lang - check that lang exists after previous step
+  become_user: '{{ pg_user }}'
+  become: true
+  register: result
+  ansible_community.postgresql.postgresql_query:
+    db: postgres
+    login_user: '{{ pg_user }}'
+    query: SELECT 1 FROM pg_language WHERE lanname = 'plperl'
+- assert:
+    that:
+    - result.rowcount == 1
+- name: postgresql_lang - drop plperl in check_mode
+  become_user: '{{ pg_user }}'
+  become: true
+  register: result
+  ignore_errors: true
+  check_mode: true
+  ansible_community.postgresql.postgresql_lang:
+    db: postgres
+    login_user: '{{ pg_user }}'
+    name: plperl
+    state: absent
+- assert:
+    that:
+    - result is changed
+    - result.queries == []
+- name: postgresql_lang - check that lang exists after previous step, rowcount must
+    be 1
+  become_user: '{{ pg_user }}'
+  become: true
+  register: result
+  ansible_community.postgresql.postgresql_query:
+    db: postgres
+    login_user: '{{ pg_user }}'
+    query: SELECT 1 FROM pg_language WHERE lanname = 'plperl'
+- assert:
+    that:
+    - result.rowcount == 1
+- name: postgresql_lang - drop plperl
+  become_user: '{{ pg_user }}'
+  become: true
+  register: result
+  ignore_errors: true
+  ansible_community.postgresql.postgresql_lang:
+    db: postgres
+    login_user: '{{ pg_user }}'
+    name: plperl
+    state: absent
+- assert:
+    that:
+    - result is changed
+    - result.queries == ['DROP LANGUAGE "plperl"']
+- name: postgresql_lang - check that lang doesn't exist after previous step, rowcount
+    must be 0
+  become_user: '{{ pg_user }}'
+  become: true
+  register: result
+  ansible_community.postgresql.postgresql_query:
+    db: postgres
+    login_user: '{{ pg_user }}'
+    query: SELECT 1 FROM pg_language WHERE lanname = 'plperl'
+- assert:
+    that:
+    - result.rowcount == 0
+- name: postgresql_lang - drop c language to check fail_on_drop yes
+  become_user: '{{ pg_user }}'
+  become: true
+  register: result
+  ignore_errors: true
+  ansible_community.postgresql.postgresql_lang:
+    db: postgres
+    login_user: '{{ pg_user }}'
+    name: c
+    state: absent
+    fail_on_drop: true
+- assert:
+    that:
+    - result.failed == true
+- name: postgresql_lang - drop c language to check fail_on_drop no
+  become_user: '{{ pg_user }}'
+  become: true
+  register: result
+  ignore_errors: true
+  ansible_community.postgresql.postgresql_lang:
+    db: postgres
+    login_user: '{{ pg_user }}'
+    name: c
+    state: absent
+    fail_on_drop: false
+- assert:
+    that:
+    - result.failed == false
+- name: postgresql_lang - create plpythonu
+  become_user: '{{ pg_user }}'
+  become: true
+  register: result
+  ignore_errors: true
+  ansible_community.postgresql.postgresql_lang:
+    db: postgres
+    login_user: '{{ pg_user }}'
+    name: plpythonu
+    trust: true
+    force_trust: true
+- assert:
+    that:
+    - result is changed
+    - result.queries == ['CREATE TRUSTED LANGUAGE "plpythonu"', "UPDATE pg_language
+      SET lanpltrusted = 'True' WHERE lanname = 'plpythonu'"]
+- name: postgresql_lang - check that lang exists and it's trusted after previous step
+  become_user: '{{ pg_user }}'
+  become: true
+  register: result
+  ansible_community.postgresql.postgresql_query:
+    db: postgres
+    login_user: '{{ pg_user }}'
+    query: SELECT 1 FROM pg_language WHERE lanname = 'plpythonu' AND lanpltrusted
+      = 't'
+- assert:
+    that:
+    - result.rowcount == 1
+- name: postgresql_lang - drop plpythonu cascade
+  become_user: '{{ pg_user }}'
+  become: true
+  register: result
+  ignore_errors: true
+  ansible_community.postgresql.postgresql_lang:
+    login_db: postgres
+    login_user: '{{ pg_user }}'
+    login_port: 5432
+    lang: plpythonu
+    state: absent
+    cascade: true
+- assert:
+    that:
+    - result is changed
+    - result.queries == ['DROP LANGUAGE "plpythonu" CASCADE']
+- name: postgresql_lang - check that lang doesn't exist after previous step, rowcount
+    must be 0
+  become_user: '{{ pg_user }}'
+  become: true
+  register: result
+  ansible_community.postgresql.postgresql_query:
+    db: postgres
+    login_user: '{{ pg_user }}'
+    query: SELECT 1 FROM pg_language WHERE lanname = 'plpythonu'
+- assert:
+    that:
+    - result.rowcount == 0

@@ -1,0 +1,35 @@
+- name: Stop slave
+  ansible_community.mysql.mysql_replication:
+    login_host: 127.0.0.1
+    login_port: '{{ standby_port }}'
+    mode: stopslave
+- name: Reset slave all
+  ansible_community.mysql.mysql_replication:
+    login_host: 127.0.0.1
+    login_port: '{{ standby_port }}'
+    mode: resetslaveall
+- name: Get master status
+  register: master_initial_status
+  ansible_community.mysql.mysql_replication:
+    login_host: 127.0.0.1
+    login_port: '{{ master_port }}'
+    mode: getmaster
+- name: Reset master
+  register: result
+  ansible_community.mysql.mysql_replication:
+    login_host: 127.0.0.1
+    login_port: '{{ master_port }}'
+    mode: resetmaster
+- assert:
+    that:
+    - result is changed
+    - result.queries == ["RESET MASTER"]
+- name: Get master status
+  register: master_final_status
+  ansible_community.mysql.mysql_replication:
+    login_host: 127.0.0.1
+    login_port: '{{ master_port }}'
+    mode: getmaster
+- assert:
+    that:
+    - master_initial_status.File != master_final_status.File

@@ -1,0 +1,4 @@
+- import_tasks: postgresql_lang_initial.yml
+  when: ansible_distribution == 'CentOS'
+- import_tasks: postgresql_lang_add_owner_param.yml
+  when: ansible_distribution == 'CentOS'

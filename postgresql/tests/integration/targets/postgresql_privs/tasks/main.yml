@@ -1,0 +1,6 @@
+- import_tasks: postgresql_privs_initial.yml
+  when: postgres_version_resp.stdout is version('9.4', '>=')
+- import_tasks: postgresql_privs_general.yml
+  when: postgres_version_resp.stdout is version('9.4', '>=')
+- import_tasks: test_target_role.yml
+  when: postgres_version_resp.stdout is version('9.4', '>=')

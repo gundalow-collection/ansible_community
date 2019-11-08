@@ -1,0 +1,8 @@
+plugins/module_utils/mysql.py future-import-boilerplate
+plugins/module_utils/mysql.py metaclass-boilerplate
+plugins/modules/mysql_db.py validate-modules:use-run-command-not-popen
+plugins/modules/mysql_db.py validate-modules:parameter-type-not-in-doc
+plugins/modules/mysql_user.py validate-modules:undocumented-parameter
+plugins/modules/mysql_user.py validate-modules:parameter-type-not-in-doc
+plugins/doc_fragments/mysql.py future-import-boilerplate
+plugins/doc_fragments/mysql.py metaclass-boilerplate

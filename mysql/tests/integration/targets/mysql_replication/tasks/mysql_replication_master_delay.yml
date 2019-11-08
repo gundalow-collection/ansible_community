@@ -1,0 +1,32 @@
+- name: Run replication
+  register: result
+  ansible_community.mysql.mysql_replication:
+    login_host: 127.0.0.1
+    login_port: '{{ standby_port }}'
+    mode: changemaster
+    master_delay: '{{ test_master_delay }}'
+- assert:
+    that:
+    - result is changed
+    - result.queries == ["CHANGE MASTER TO MASTER_DELAY=60"]
+- name: Start slave
+  register: result
+  ansible_community.mysql.mysql_replication:
+    login_host: 127.0.0.1
+    login_port: '{{ standby_port }}'
+    mode: startslave
+- name: Get standby status
+  register: slave_status
+  ansible_community.mysql.mysql_replication:
+    login_host: 127.0.0.1
+    login_port: '{{ standby_port }}'
+    mode: getslave
+- assert:
+    that:
+    - slave_status.SQL_Delay == {{ test_master_delay }}
+    - slave_status is not changed
+- name: Stop slave
+  ansible_community.mysql.mysql_replication:
+    login_host: 127.0.0.1
+    login_port: '{{ standby_port }}'
+    mode: stopslave

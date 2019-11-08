@@ -1,0 +1,15 @@
+namespace: ansible_community
+name: mysql
+version: 1.0.0
+readme: null
+authors: null
+description: null
+license: null
+license_file: null
+tags: null
+dependencies:
+  ansible_community.postgresql: '>=1.0'
+repository: git@github.com:ansible-collection-migration/ansible_community.mysql.git
+documentation: null
+homepage: null
+issues: null

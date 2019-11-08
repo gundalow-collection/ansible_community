@@ -1,0 +1,8 @@
+plugins/modules/vertica_configuration.py validate-modules:doc-missing-type
+plugins/modules/vertica_info.py validate-modules:doc-missing-type
+plugins/modules/vertica_role.py validate-modules:undocumented-parameter
+plugins/modules/vertica_role.py validate-modules:doc-missing-type
+plugins/modules/vertica_schema.py validate-modules:undocumented-parameter
+plugins/modules/vertica_schema.py validate-modules:doc-missing-type
+plugins/modules/vertica_user.py validate-modules:undocumented-parameter
+plugins/modules/vertica_user.py validate-modules:doc-missing-type
