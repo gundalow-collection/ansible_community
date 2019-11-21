@@ -4,6 +4,8 @@ This repo will be the default location of Collections that don't have another ho
 
 All Collections will be release on the same schedule by the Community Team.
 
+Each Collection contained in this repo will be listed as a dependency of the `ansible.kitchen_sink` Meta collection
+
 ## Contents
 
 There are a lot of (groups of) modules that:
